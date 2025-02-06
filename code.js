@@ -1,7 +1,7 @@
 const urlBase = "http://POOSD_Small.ihardcodebubblesort.com/LAMPAPI";
 const extention = 'php';
 
-let userID = 0;
+let userId = 0;
 let firstName = "";
 let lastName = "";
 
