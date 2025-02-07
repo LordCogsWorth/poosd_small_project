@@ -4,26 +4,34 @@ const extention = 'php';
 let userId = 0;
 let firstName = "";
 let lastName = "";
-
 let companyName = "";
 let phoneNum = 0;
 let email = "";
+let bday = "";
+
+// login and password here are for creating a new user
+let login = "";
+let password = "";
 
 function addUser() {
     // This section grabs the text inputed into the fields when adding a user
-    //let newUserID = document.getElementById("userIdText") // This would only be needed if there is an input field for ID
+    let newUserId = document.getElementById("userIdText").value; // This would only be needed if there is an input field for ID
     let newFirstName = document.getElementById("newFirstNameField").value;
     let newLastName = document.getElementById("newLastNameField").value;
     let newCompanyName = document.getElementById("newCompanyNameField").value;
     let newPhoneNum = document.getElementById("newPhoneNumField").value;
     let newEmail = document.getElementById("newEmailField").value;
+    let newBday = document.getElementById("NewBdayField").value;
+
+    let newLogin = document.getElementById("createLoginField").value;
+    let newPassword = document.getElementById("createPasswordField").value;
 
     document.getElementById("userAddResult").innerHTML = "";
-  
-    let tmp = {userID:newUserID, firstName:newFirstName, lastName:newLastName, companyName:newCompanyName, phoneNum:newPhoneNum, email:newEmail}  // Not 100% sure about this line
+
+    let tmp = {user_id:newUserId, user_login:newLogin, user_password:newPassword, user_email:newEmail, user_firstName:newFirstName, user_lastName:newLastName, birth_date:newBday, user_company:newCompanyName, user_phone_num:newPhoneNum,};
     let jsonPayload = JSON.stringify(tmp);
     
-    let url = urlBase + '/AddUser' + extention;
+    let url = urlBase + '/AddUser.' + extention; // Connects to AddUser.php
 
     let xhr = new XMLHttpRequest();
     xhr.open("POST", url, true);
@@ -39,7 +47,6 @@ function addUser() {
         xhr.send(jsonPayload);  // This sends the add user request to the database
     }
     catch(err) {
-        // TODO: Display error message for any blank fields
         // TODO: Or only display error if name and email is blank since that is the minimum information needed for each contact
         // By default this just displays a single error message if the add user request is rejected for any reason
         document.getElementById("userAddResult").innerHTML = err.message;
