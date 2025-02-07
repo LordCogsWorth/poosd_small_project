@@ -52,3 +52,33 @@ function addUser() {
         document.getElementById("userAddResult").innerHTML = err.message;
     }
 }
+
+function addContact() {
+    let newContactId = document.getElementById("AddContactIdField").value;
+    let newFirstName = document.getElementById("AddContactFirstNameField").value;
+    let newLastName = document.getElementById("AddContactLastNameField").value;
+    let newEmail = document.getElementById("AddContactEmailField").value;
+    let newPhoneNum = document.getElementById("AddContactPhoneField").value;
+    let newCompanyName = document.getElementById("AddContactCompanyField").value;
+    let newNotes = document.getElementById("AddContactNotesField").value;
+
+    let tmp = {contact_id:newContactId,first_name:newFirstName,last_name:newLastName,contact_email:newEmail,contact_phone_number:newPhoneNum,contact_company:newCompanyName,notes:newNotes,user_id:userId};
+    let jsonPayload = JSON.stringify(tmp);
+
+    let url = urlBase + '/AddContact.' + extention; // Connects to the AddContact.php file
+
+    let xhr = new XMLHttpRequest();
+    xhr.open("POST", url, true);
+    xhr.setRequestHeader("Content-type", "application/json; charset=UTF-8");
+    try {
+        xhr.onreadystatechange = function() {
+            if (this.readyState == 4 && this.status == 200) {
+                document.getElementById("AddContactResult").innerHTML = "Contact added";
+            }
+        };
+        xhr.send(jsonPayload);
+    }
+    catch(err) {
+        document.getElementById("AddContactResult").innerHTML = err.message;
+    }
+}
