@@ -14,18 +14,18 @@
     if ($conn->connect_error) {
         returnWithError($conn->connect_error);
     }
-    else {
-        $stmt = $conn->prepare("INSERT into Contacts (contact_id,first_name,last_name,contact_email,contact_phone_number,contact_company,notes,user_id");
+   `else {
+        $stmt = $conn->prepare("INSERT into contacts (contact_id,first_name,last_name,contact_email,contact_phone_number,contact_company,notes,user_id) VALUES(?,?,?,?,?,?,?,?)");
         $stmt->bind_param("ssssssss", $contactId, $firstName,$lastName,$contactEmail,$contactPhone,$contactCompany,$notes,$userId);
         $stmt->execute();
         $stmt->close();
         $conn->close();
-        returnWithError("");
+        //returnWithError("");
     }
 
-    function getRequestInfo() {
+	function getRequestInfo() {
 		return json_decode(file_get_contents('php://input'), true);
-	}
+    	}
 
 	function sendResultInfoAsJson($obj) {
 		header('Content-type: application/json');
