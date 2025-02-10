@@ -53,43 +53,64 @@ body
 {
     width: 50%;
     height: 50%;
+    margin-left: 25%;
+    margin-right: 25%;
     align: right;
 }
 
-#registerButton
+#buttonBox
 {
-    background: none;
-    color: blue;
-    outline: none;
+    margin-left: 25%;
 }
 
-#loginButton
+label
 {
-    color: white;
-    background-color: blue;
+    margin-left: 25%;
+    width: 50%;
+    margin-right: 25%;
+}
 
+#remember-text
+{
+    margin-left: 25%;
+}
+
+#checkbox
+{
+    margin-left: 50%;
 }
 
 .buttons
 {
-    font-size: 15px;
-    border-radius: 7px;
+    background-color: #000000;
+    color: rgb(255, 255, 255);
+    border: none;
+    padding: 10px;
+    font-size: 16px;
+    cursor: pointer;
+    margin-top: 20px;
+    border-radius: 2px;
     width: 20%;
-    margin-left: 0%;
-    margin-right: 9%;
+    margin-left: 5%;
+    margin-right: 5%;
     font-family: 'Ubuntu', sans-serif;
 }
 
 .buttons:hover{
-    background-color: #00d5124f;
+    background-color: #000000;
     color: #FFFFFF;
     opacity: 50%;
+}
+
+#registerButton
+{
+    margin-left: 25%;
 }
 
 #loginName
 {
 	font-size: 20px;
-	font-family: 'Nabla', 'serif';
+	font-family: 'Honk', 'serif';
 	color: black;
 }
 #loginPassword
@@ -110,8 +131,8 @@ input[type="text"],input[type="password"]{
     text-align: center;
     width: 50%;
     height: 40px;
-    margin-left: 0%;
-    margin-right: 50%;
+    margin-left: 25%;
+    margin-right: 25%;
     margin-bottom: 2%;
     font-family: 'Ubuntu', sans-serif;
     font-size: 25px;
@@ -122,10 +143,10 @@ input[type="text"],input[type="password"]{
     font-size: 2.0em;
     width: 50%;
     text-align: center;
-    margin-left: 0%;
+    margin-left: 25%;
     margin-right: 50%;
     margin-bottom: 2%;
-    font-family: 'Ubuntu', sans-serif;
+    font-family: 'Press Start 2P', sans-serif;
     color: #95060a;
 }
 
@@ -145,11 +166,6 @@ input[type="text"],input[type="password"]{
     width: 80%;
     margin-left: 10%;
     text-align: center;
-}
-
-#logoutButton{
-    width: 20%;
-    margin-left: 40%;
 }
 
 select{

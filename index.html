@@ -7,25 +7,29 @@
     <link href="https://fonts.googleapis.com/css?family=Ubuntu" rel="stylesheet">
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Nabla&family=Tourney:ital,wght@0,100..900;1,100..900&display=swap" rel="stylesheet">
-    <link rel="icon" href="knight.png" type="image/x-icon">
+    <link href="https://fonts.googleapis.com/css2?family=Doto:wght@100..900&family=Handjet:wght@100..900&family=Honk:MORF@18&family=Nabla:EDPT@65&family=Press+Start+2P&family=Rampart+One&family=Rubik+Iso&family=Silkscreen:wght@400;700&display=swap" rel="stylesheet">
+    <link rel="icon" href="images/logo.png" type="image/x-icon">
 </head>
 <body>
 
 <h1 id="title">Contact Manager PRO</h1>
 
 <div id="loginDiv">
-	<img src="knight.png" alt="super-freakin-cool-logo" id="knight">
+	<img src="images/logo.png" alt="super-freakin-cool-logo" id="knight">
 	<span id="inner-title">Login</span>
-	<span id="user-title">Username:</span>
+	<label id="user-title">Username:</label>
 	<input type="text" id="loginName"/><br />
-	<span id="pw-title">Password:</span>
+	<label id="pw-title">Password:</label>
 	<input type="password" id="loginPassword"/><br />
 	<div>
 		<span id="remember-text">Remember me:</span>
 		<input type="checkbox" id="checkbox"/><br />
-		<button type="button" id="loginButton" class="buttons" onclick="doLogin();"> Submit </button>
-		<button type="button" id="registerButton" class="buttons" onclick="toSignup();">Register Here</button>
+
+		<div id="buttonBox">
+		    <button type="button" id="loginButton" class="buttons" onclick="doLogin();"> Submit </button>
+		    <button type="button" id="toregisterButton" class="buttons" onclick="toSignup();">Register Here</button>
+		</div>
+
 	</div>
 	<span id="loginResult"></span>
 </div>

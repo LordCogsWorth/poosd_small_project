@@ -1,0 +1,97 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <title>POOSD Small Project - Contact Manager</title>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="icon" href="logo.png" type="image/x-icon">
+    <link rel="stylesheet" href="main.css">
+    <script typw="text/javascript" src="main.js"></script>
+
+    <script type="text/javascript">
+        document.addEventListener('DOMContentLoaded', function()
+    {
+        readCookie();
+    }, false);
+    </script>
+
+</head>
+
+
+<body>
+
+    <div class="sidebar">
+        <img src="logo.png" alt="Company Logo" class="company-logo">
+        <h2>Contacts</h2>
+        <ul>
+            <li id="viewContactsBtn">All Contacts</li>
+            <li id="addContactViewBtn">Add Contact</li>
+            <li id="DeleteViewBtn">Delete Contact</li>
+        </ul>
+        <span id="userName"></span>
+        <button type="button" id = "logoutBtn" class="logout-button" onclick="doLogOut();">Logout</button>
+    </div>
+    
+    <div class="main-content">
+        <h1 id="title">COP 4331 Small Project - Contact Manager</h1>
+        <div id="contactsView">
+            <div class="searchBar">
+                <input type="text" id="search" class="search-bar" placeholder="Search contacts" onkeyup="filterContacts()">
+            </div>
+
+            <!--<span id="contactSearchResult"></span>
+            <p id="contactTable">
+
+            </p>-->
+        
+            <table>
+                <thead>
+                    <tr>
+                        <th>Name</th>
+                        <th>Phone</th>
+                        <th>Company</th>
+                        <th>Email</th>
+                        <th>Notes</th>
+                    </tr>
+                </thead>
+                <tbody id="contactTable">
+                    <tr>
+                        <td>Orange man</td>
+                        <td>321-321-9874</td>
+                        <td>OrangeInc.</td>
+                        <td>Orange123@gmail.com</td>
+                        <td>Whatever</td>
+                    </tr>
+                    <tr>
+                        <td>Pear man</td>
+                        <td>321-153-8943</td>
+                        <td>PearInc</td>
+                        <td>Pear123@gmail.com</td>
+                        <td>We up for real</td>
+                    </tr>
+                    <tr>
+                        <td>Kiwi man</td>
+                        <td>321-178-3641</td>
+                        <td>KiwiInc</td>
+                        <td>Kiwi123@gmail.com</td>
+                        <td>We up for real</td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+
+        <!--Adding Contacts -->
+        <div id="addContactView" style="display: none;">
+            <h2>Add New Contact</h2>
+            <input type="text" id="contactFirstName" placeholder="First Name">
+            <input type="text" id="contactLastName" placeholder="Last Name">
+            <input type="text" id="contactCompany" placeholder="Company">
+            <input type="text" id="contactEmail" placeholder="Email">
+            <input type="text" id="contactPhone" placeholder="Phone Number">
+            <input type="text" id="contactNotes" placeholder="Notes">
+            <button typw="button" id="addContact" class="buttons" onclick = "addContact();">Add Contact</button>
+            <span id="ContactAddResult"></span>
+        </div>
+    </div>
+</body>
+</html>
