@@ -8,42 +8,45 @@
 
     if ($conn->connect_error) 
     {
-        returnWithError( $conn->connect_error );
+        returnWithError($conn->connect_error);
     }
     else
     {
-        $stmt = $conn->prepare("select Name from Contact where first_name like ? OR last_name like ? OR contact_email like ? OR contact_phone_number like ? OR contact_company like ? and user_id=?");
+        // SQL query with proper parentheses for correct logic
+        $stmt = $conn->prepare("SELECT first_name, last_name, contact_phone_number, contact_email, contact_company 
+                                FROM Contact 
+                                WHERE (first_name LIKE ? OR last_name LIKE ? OR contact_email LIKE ? OR contact_phone_number LIKE ? OR contact_company LIKE ?) 
+                                AND user_id = ?");
+        
         $searchTerm = "%" . $inData["search"] . "%";
-        $stmt->bind_param("sss", $searchTerm, $searchTerm, $inData["userId"]);
+        $stmt->bind_param("sssssi", $searchTerm, $searchTerm, $searchTerm, $searchTerm, $searchTerm, $inData["userId"]);
         $stmt->execute();
-
         $result = $stmt->get_result();
 
-        while($row = $result->fetch_assoc())
+        $contacts = [];
+        
+        while ($row = $result->fetch_assoc())
         {
-            if ($searchCount > 0 )
-            {
-                if ( $searchCount > 0 )
-                {
-                    $searchResults .= ",";
-                }
-                $searchCount++;
-                $searchResults .= '"'. $row["Name"] .'"';
-            }
+            $contacts[] = [
+                "firstName" => $row["first_name"],
+                "lastName" => $row["last_name"],
+                "phone" => $row["contact_phone_number"],
+                "email" => $row["contact_email"],
+                "company" => $row["contact_company"]
+            ];
         }
 
-        if ( $searchCount == 0 )
+        if (empty($contacts))
         {
-            returnWithError( "No Records Found" );
+            returnWithError("No Records Found");
         }
         else
         {
-            returnWithInfo( $searchResults );
+            returnWithInfo($contacts);
         }
 
         $stmt->close();
         $conn->close();
-
     }
 
     function getRequestInfo()
@@ -51,22 +54,21 @@
         return json_decode(file_get_contents('php://input'), true);
     }
 
-    function sendResultInfoAsJson( $obj )
+    function sendResultInfoAsJson($obj)
     {
         header('Content-type: application/json');
-        echo $obj;
+        echo json_encode($obj);
     }
 
-    function returnWithError( $err )
+    function returnWithError($err)
     {
-        $retValue = '{"id":0,"firstName":"","lastName":"","error":"' . $err . '"}';
-        sendResultInfoAsJson( $retValue );
+        $retValue = ["results" => [], "error" => $err];
+        sendResultInfoAsJson($retValue);
     }
 
-    function returnWithInfo( $searchResults )
+    function returnWithInfo($contacts)
     {
-        $retValue = '{"results":[' . $searchResults . '],"error":""}';
-        sendResultInfoAsJson( $retValue );
+        $retValue = ["results" => $contacts, "error" => ""];
+        sendResultInfoAsJson($retValue);
     }
-
 ?>

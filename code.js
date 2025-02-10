@@ -45,3 +45,90 @@ function addUser() {
         document.getElementById("userAddResult").innerHTML = err.message;
     }
 }
+
+function searchContacts() {
+    // assuming the field for searching is called searchField
+    let searchQuery = document.getElementById("searchField").value;
+    document.getElementById("searchResults").innerHTML = "";
+
+    let tmp = { search: searchQuery, userId: userID };
+    let jsonPayload = JSON.stringify(tmp);
+
+    let url = urlBase + "/SearchContact." + extention;
+
+    let xhr = new XMLHttpRequest();
+    xhr.open("POST", url, true);
+    xhr.setRequestHeader("Content-type", "application/json; charset=UTF-8");
+
+    try {
+        xhr.onreadystatechange = function () {
+            if (this.readyState == 4 && this.status == 200) {
+                let jsonObject = JSON.parse(xhr.responseText);
+                
+                if (jsonObject.error && jsonObject.error !== "") {
+                    document.getElementById("searchResults").innerHTML = jsonObject.error;
+                    return;
+                }
+
+                let results = jsonObject.results;
+                let output = "<ul>";
+                for (let i = 0; i < results.length; i++) {
+                    output += "<li>" + results[i] + "</li>";
+                }
+                output += "</ul>";
+
+                document.getElementById("searchResults").innerHTML = output;
+            }
+        };
+        xhr.send(jsonPayload);
+    } catch (err) {
+        document.getElementById("searchResults").innerHTML = err.message;
+    }
+}
+
+function updateContact() {
+    let contactId = document.getElementById("contactIdField").value; // Hidden field
+    let updatedFirstName = document.getElementById("updateFirstNameField").value;
+    let updatedLastName = document.getElementById("updateLastNameField").value;
+    let updatedEmail = document.getElementById("updateEmailField").value;
+    let updatedPhone = document.getElementById("updatePhoneField").value;
+    let updatedCompany = document.getElementById("updateCompanyField").value;
+
+    document.getElementById("updateResult").innerHTML = "";
+
+    let tmp = { 
+        id: contactId,
+        userId: userID,
+        firstName: updatedFirstName,
+        lastName: updatedLastName,
+        email: updatedEmail,
+        phone: updatedPhone,
+        company: updatedCompany
+    };
+    
+    let jsonPayload = JSON.stringify(tmp);
+    let url = urlBase + "/UpdateContact." + extention;
+
+    let xhr = new XMLHttpRequest();
+    xhr.open("PUT", url, true);
+    xhr.setRequestHeader("Content-type", "application/json; charset=UTF-8");
+
+    try {
+        xhr.onreadystatechange = function () {
+            if (this.readyState == 4 && this.status == 200) {
+                let jsonObject = JSON.parse(xhr.responseText);
+                
+                if (jsonObject.error && jsonObject.error !== "") {
+                    document.getElementById("updateResult").innerHTML = jsonObject.error;
+                } else {
+                    document.getElementById("updateResult").innerHTML = "Contact updated successfully";
+                }
+            }
+        };
+        xhr.send(jsonPayload);
+    } catch (err) {
+        document.getElementById("updateResult").innerHTML = err.message;
+    }
+}
+
+
