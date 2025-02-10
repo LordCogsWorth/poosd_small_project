@@ -4,7 +4,13 @@
     $searchResults = "";
     $searchCount = 0;
 
-    $conn = new mysqli("localhost", "Admin", "AdminPass", "SmallProj");
+    // Temporary stuff to connect
+    $server = "44.200.18.104";
+    $username = "poosd_database_commander";
+    $password = "Bubblesort101";
+    $database = "poosd_contact_manager";
+
+    $conn = new mysqli($server, $username, $password, $database);
 
     if ($conn->connect_error) 
     {
@@ -14,7 +20,7 @@
     {
         // SQL query with proper parentheses for correct logic
         $stmt = $conn->prepare("SELECT first_name, last_name, contact_phone_number, contact_email, contact_company 
-                                FROM Contact 
+                                FROM contacts 
                                 WHERE (first_name LIKE ? OR last_name LIKE ? OR contact_email LIKE ? OR contact_phone_number LIKE ? OR contact_company LIKE ?) 
                                 AND user_id = ?");
         

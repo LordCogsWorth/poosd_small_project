@@ -1,7 +1,13 @@
 <?php
     $inData = getRequestInfo();
 
-    $conn = new mysqli("localhost", "Admin", "AdminPass", "SmallProj");
+     // Temporary stuff to connect
+    $server = "44.200.18.104";
+    $username = "poosd_database_commander";
+    $password = "Bubblesort101";
+    $database = "poosd_contact_manager";
+
+    $conn = new mysqli($server, $username, $password, $database);
 
     if ($conn->connect_error) 
     {
@@ -9,7 +15,7 @@
     }
     else
     {
-        $stmt = $conn->prepare("UPDATE Contact SET first_name=?, last_name=?, contact_email=?, contact_phone_number=?, contact_company=? WHERE contact_id=? AND user_id=?");
+        $stmt = $conn->prepare("UPDATE contacts SET first_name=?, last_name=?, contact_email=?, contact_phone_number=?, contact_company=? WHERE contact_id=? AND user_id=?");
         $stmt->bind_param("sssssii", $inData["firstName"], $inData["lastName"], $inData["email"], $inData["phone"], $inData["company"], $inData["id"], $inData["userId"]);
 
         if ($stmt->execute()) 
