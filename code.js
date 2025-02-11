@@ -82,3 +82,28 @@ function addContact() {
         document.getElementById("AddContactResult").innerHTML = err.message;
     }
 }
+
+function deleteContact() {
+    // ! I'm not sure that this actually gets the right value
+    let delContactId = document.getElementById("DeleteButton").value;
+
+    let tmp = {contact_id:delContactId};
+    let jsonPayload = JSON.stringify(tmp);
+
+    let url = urlBase + '/DeleteContact.' + extention;  // Connects to DeleteContact.php
+
+    let xhr = new XMLHttpRequest();
+    xhr.open("POST", url, true);
+    xhr.setRequestHeader("Content-type", "application/json; charset=UTF-8");
+    try {
+        xhr.onreadystatechange = function() {
+            if (this.readyState == 4 && this.status == 200) {
+                document.getElementById("deleteResult").innerHTML = "Contact deleted";
+            }
+        };
+        xhr.send(jsonPayload);
+    }
+    catch(err) {
+        document.getElementById("deleteResult").innerHTML = err.message;
+    }
+}
