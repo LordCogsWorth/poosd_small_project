@@ -16,6 +16,11 @@ function toSignup()
     window.location.href = "signup.html";
 }
 
+function toSignin()
+{
+    window.location.href = "index.html";
+}
+
 // login and password here are for creating a new user
 let login = "";
 let password = "";
