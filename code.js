@@ -52,3 +52,50 @@ function addUser() {
         document.getElementById("userAddResult").innerHTML = err.message;
     }
 }
+
+function loadContacts() {
+    //This function will load all contacts as soon as the page is loaded for the first time
+    
+    // Terminate if user not logged in properly
+    if (userId < 0) {
+        return;
+    }
+
+    //Load JSON for search
+    let tmp = {user_id:userId};
+    let jsonPayload = JSON.stringify(tmp);
+
+    let url = urlBase + "/SearchContact." + extension;
+
+    let xhr = new XMLHttpRequest();
+    xhr.open("POST", url, true);
+    xhr.setRequestHeader("Content-type", "application/json; charset=UTF-8");
+
+    try {
+        xhr.onreadystatechange = function() {
+            if (this.readyState == 4 && this.status == 200) {
+                let jsonObject = JSON.parse(xhr.responseText);
+
+                if (jsonObject.error && jsonObject.error !== "") {
+                    document.getElementById("contactsList").innerHTML = jsonObject.error;
+                    return;
+                }
+
+                let results = jsonObject.results;
+                let output = "<ul>";
+                for (let i=0; i<results.length; i++) {
+                    output += `<li>${results[i].first_name} ${results[i].last_name} - ${results[i].contact_email} - ${results[i].contact_phone_number}</li>`;
+                }
+                output += "<ul>";
+
+                document.getElementById("contactsList").innerHTML = output;
+            }
+        };
+        xhr.send(jsonPayload);  // This sends the add user request to the database
+    }
+    catch(err) {
+        // TODO: Or only display error if name and email is blank since that is the minimum information needed for each contact
+        // By default this just displays a single error message if the add user request is rejected for any reason
+        document.getElementById("contactsList").innerHTML = err.message;
+    }
+}
