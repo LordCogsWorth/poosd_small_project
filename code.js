@@ -91,7 +91,6 @@ function addContact() {
 }
 
 function searchContacts() {
-    // assuming the field for searching is called searchField
     let searchQuery = document.getElementById("search").value;
     //document.getElementById("searchResults").innerHTML = "";
 
@@ -120,7 +119,9 @@ function searchContacts() {
                 tableBody.innerHTML = ""; // Clear existing table data
 
                 for (let i = 0; i < results.length; i++) {
-                    let row = `<tr>
+                    let row = document.createElement("tr");
+                    row.setAttribute("data-contact-id", results[i].id);
+                    row.innerHTML = `
                         <td>${results[i].firstName} ${results[i].lastName}</td>
                         <td>${results[i].phone}</td>
                         <td>${results[i].company}</td>
@@ -130,8 +131,8 @@ function searchContacts() {
                             <button onclick="updateContact(${results[i].id})">Edit</button>
                             <button onclick="deleteContact(${results[i].id})">Delete</button>
                         </td>
-                    </tr>`;
-                    tableBody.innerHTML += row;
+                    `;
+                    tableBody.appendChild(row);
                 }
             }
         };
@@ -187,7 +188,6 @@ function updateContact(contactId) {
 }
 
 function deleteContact(delContactId) {
-    // ! I'm not sure that this actually gets the right value
     if (!delContactId) {
         console.error("No contact ID");
         return;
@@ -205,6 +205,12 @@ function deleteContact(delContactId) {
         xhr.onreadystatechange = function() {
             if (this.readyState == 4 && this.status == 200) {
                 //document.getElementById("deleteResult").innerHTML = "Contact deleted";
+                
+                // Remove the row from the table
+                let rowToDelete = document.querySelector(`tr[data-contact-id="${delContactId}"]`);
+                if (rowToDelete) {
+                    rowToDelete.remove();
+                }
             }
         };
         xhr.send(jsonPayload);
@@ -249,6 +255,7 @@ function loadContacts() {
                 // Insert each contact as a new table row
                 for (let i = 0; i < results.length; i++) {
                     let row = document.createElement("tr");
+                    row.setAttribute("data-contact-id", results[i].id);
                     row.innerHTML = `
                         <td>${results[i].firstName} ${results[i].lastName}</td>
                         <td>${results[i].phone}</td>
