@@ -1,7 +1,6 @@
 <?php
     $indata = getRequestInfo();
 
-    $contactId = $indata["contact_id"];
     $firstName = $indata["first_name"];
     $lastName = $indata["last_name"];
     $contactEmail = $indata["contact_email"];
@@ -10,13 +9,19 @@
     $notes = $indata["notes"];
     $userId = $indata["user_id"];   // This is the id of the user that is logged in not the contact
 
-    $conn = new mysqli("localhost", "poosd_database_commander", "Bubblesort101", "poosd_contact_manager");
+    $server = "44.200.18.104";
+    $username = "poosd_database_commander";
+    $password = "Bubblesort101";
+    $database = "poosd_contact_manager";
+
+    $conn = new mysqli($server, $username, $password, $database);
+
     if ($conn->connect_error) {
         returnWithError($conn->connect_error);
     }
     else {
-        $stmt = $conn->prepare("INSERT into contacts (contact_id,first_name,last_name,contact_email,contact_phone_number,contact_company,notes,user_id) VALUES(?,?,?,?,?,?,?,?)");
-        $stmt->bind_param("issssssi", $contactId, $firstName,$lastName,$contactEmail,$contactPhone,$contactCompany,$notes,$userId);
+        $stmt = $conn->prepare("INSERT into contacts (first_name,last_name,contact_email,contact_phone_number,contact_company,notes,user_id) VALUES(?,?,?,?,?,?,?)");
+        $stmt->bind_param("ssssssi", $firstName,$lastName,$contactEmail,$contactPhone,$contactCompany,$notes,$userId);
         $stmt->execute();
         $stmt->close();
         $conn->close();
@@ -24,16 +29,16 @@
     }
 
     function getRequestInfo() {
-	return json_decode(file_get_contents('php://input'), true);
+        return json_decode(file_get_contents('php://input'), true);
     }
 
-	function sendResultInfoAsJson($obj) {
-		header('Content-type: application/json');
-		echo $obj;
-	}
+    function sendResultInfoAsJson($obj) {
+        header('Content-type: application/json');
+        echo $obj;
+    }
 
-	function returnWithError($err) {
-		$retValue = '{"error":"' . $err . '"}';
-		sendResultInfoAsJson($retValue);
-	}
+    function returnWithError($err) {
+        $retValue = '{"error":"' . $err . '"}';
+        sendResultInfoAsJson($retValue);
+    }
 ?>
