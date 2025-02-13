@@ -21,7 +21,7 @@ function addUser() {
     let newCompanyName = document.getElementById("newCompanyNameField").value;
     let newPhoneNum = document.getElementById("newPhoneNumField").value;
     let newEmail = document.getElementById("newEmailField").value;
-    let newBday = document.getElementById("NewBdayField").value;
+    let newBday = document.getElementById("newBdayField").value;
 
     let newLogin = document.getElementById("createLoginField").value;
     let newPassword = document.getElementById("createPasswordField").value;
