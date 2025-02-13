@@ -62,7 +62,7 @@ function loadContacts() {
     }
 
     //Load JSON for search
-    let tmp = {user_id:userId};
+    let tmp = {search:"", user_id:userId};
     let jsonPayload = JSON.stringify(tmp);
 
     let url = urlBase + "/SearchContact." + extension;
