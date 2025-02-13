@@ -38,7 +38,8 @@
                 "lastName" => $row["last_name"],
                 "phone" => $row["contact_phone_number"],
                 "email" => $row["contact_email"],
-                "company" => $row["contact_company"]
+                "company" => $row["contact_company"],
+                "id" => $row["contact_id"]
             ];
         }
 

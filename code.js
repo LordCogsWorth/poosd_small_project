@@ -61,14 +61,15 @@ function addUser() {
 }
 
 function addContact() {
-    let newFirstName = document.getElementById("AddContactFirstNameField").value;
-    let newLastName = document.getElementById("AddContactLastNameField").value;
-    let newEmail = document.getElementById("AddContactEmailField").value;
-    let newPhoneNum = document.getElementById("AddContactPhoneField").value;
-    let newCompanyName = document.getElementById("AddContactCompanyField").value;
-    let newNotes = document.getElementById("AddContactNotesField").value;
+    let newFirstName = document.getElementById("contactFirstName").value;
+    let newLastName = document.getElementById("contactLastName").value;
+    let newEmail = document.getElementById("contactEmail").value;
+    let newPhoneNum = document.getElementById("contactPhone").value;
+    let newCompanyName = document.getElementById("contactCompany").value;
+    let newNotes = document.getElementById("contactNotes").value;
 
     let tmp = {first_name:newFirstName,last_name:newLastName,contact_email:newEmail,contact_phone_number:newPhoneNum,contact_company:newCompanyName,notes:newNotes,user_id:userId};
+    console.log(userId);
     let jsonPayload = JSON.stringify(tmp);
 
     let url = urlBase + '/AddContact.' + extention; // Connects to the AddContact.php file
@@ -79,22 +80,22 @@ function addContact() {
     try {
         xhr.onreadystatechange = function() {
             if (this.readyState == 4 && this.status == 200) {
-                document.getElementById("AddContactResult").innerHTML = "Contact added";
+                document.getElementById("ContactAddResult").innerHTML = "Contact added";
             }
         };
         xhr.send(jsonPayload);
     }
     catch(err) {
-        document.getElementById("AddContactResult").innerHTML = err.message;
+        document.getElementById("ContactAddResult").innerHTML = err.message;
     }
 }
 
 function searchContacts() {
     // assuming the field for searching is called searchField
-    let searchQuery = document.getElementById("searchField").value;
-    document.getElementById("searchResults").innerHTML = "";
+    let searchQuery = document.getElementById("search").value;
+    //document.getElementById("searchResults").innerHTML = "";
 
-    let tmp = { search: searchQuery, userId: userID };
+    let tmp = { search: searchQuery, userId: userId };
     let jsonPayload = JSON.stringify(tmp);
 
     let url = urlBase + "/SearchContact." + extention;
@@ -109,28 +110,39 @@ function searchContacts() {
                 let jsonObject = JSON.parse(xhr.responseText);
                 
                 if (jsonObject.error && jsonObject.error !== "") {
-                    document.getElementById("searchResults").innerHTML = jsonObject.error;
+                    document.getElementById("contactTable").innerHTML = 
+                        `<tr><td colspan="6">${jsonObject.error}</td></tr>`;
                     return;
                 }
 
                 let results = jsonObject.results;
-                let output = "<ul>";
-                for (let i = 0; i < results.length; i++) {
-                    output += "<li>" + results[i] + "</li>";
-                }
-                output += "</ul>";
+                let tableBody = document.getElementById("contactTable");
+                tableBody.innerHTML = ""; // Clear existing table data
 
-                document.getElementById("searchResults").innerHTML = output;
+                for (let i = 0; i < results.length; i++) {
+                    let row = `<tr>
+                        <td>${results[i].firstName} ${results[i].lastName}</td>
+                        <td>${results[i].phone}</td>
+                        <td>${results[i].company}</td>
+                        <td>${results[i].email}</td>
+                        <td>${results[i].notes ? results[i].notes : ""}</td>
+                        <td>
+                            <button onclick="updateContact(${results[i].id})">Edit</button>
+                            <button onclick="deleteContact(${results[i].id})">Delete</button>
+                        </td>
+                    </tr>`;
+                    tableBody.innerHTML += row;
+                }
             }
         };
         xhr.send(jsonPayload);
     } catch (err) {
-        document.getElementById("searchResults").innerHTML = err.message;
+        document.getElementById("contactTable").innerHTML = 
+            `<tr><td colspan="6">${err.message}</td></tr>`;
     }
 }
 
-function updateContact() {
-    let contactId = document.getElementById("contactIdField").value; // Hidden field
+function updateContact(contactId) {
     let updatedFirstName = document.getElementById("updateFirstNameField").value;
     let updatedLastName = document.getElementById("updateLastNameField").value;
     let updatedEmail = document.getElementById("updateEmailField").value;
@@ -141,7 +153,7 @@ function updateContact() {
 
     let tmp = { 
         id: contactId,
-        userId: userID,
+        userId: userId,
         firstName: updatedFirstName,
         lastName: updatedLastName,
         email: updatedEmail,
@@ -174,9 +186,12 @@ function updateContact() {
     }
 }
 
-function deleteContact() {
+function deleteContact(delContactId) {
     // ! I'm not sure that this actually gets the right value
-    let delContactId = document.getElementById("DeleteButton").value;
+    if (!delContactId) {
+        console.error("No contact ID");
+        return;
+    }
 
     let tmp = {contact_id:delContactId};
     let jsonPayload = JSON.stringify(tmp);
@@ -189,13 +204,13 @@ function deleteContact() {
     try {
         xhr.onreadystatechange = function() {
             if (this.readyState == 4 && this.status == 200) {
-                document.getElementById("deleteResult").innerHTML = "Contact deleted";
+                //document.getElementById("deleteResult").innerHTML = "Contact deleted";
             }
         };
         xhr.send(jsonPayload);
     }
     catch(err) {
-        document.getElementById("deleteResult").innerHTML = err.message;
+        //document.getElementById("deleteResult").innerHTML = err.message;
     }
 }
 
@@ -208,10 +223,10 @@ function loadContacts() {
     }
 
     //Load JSON for search
-    let tmp = {search:"", user_id:userId};
+    let tmp = {search:"", userId:userId};
     let jsonPayload = JSON.stringify(tmp);
 
-    let url = urlBase + "/SearchContact." + extension;
+    let url = urlBase + "/SearchContact." + extention;
 
     let xhr = new XMLHttpRequest();
     xhr.open("POST", url, true);
@@ -223,18 +238,30 @@ function loadContacts() {
                 let jsonObject = JSON.parse(xhr.responseText);
 
                 if (jsonObject.error && jsonObject.error !== "") {
-                    document.getElementById("contactsList").innerHTML = jsonObject.error;
+                    document.getElementById("contactTable").innerHTML = `<tr><td colspan="6">${jsonObject.error}</td></tr>`;
                     return;
                 }
 
                 let results = jsonObject.results;
-                let output = "<ul>";
-                for (let i=0; i<results.length; i++) {
-                    output += `<li>${results[i].first_name} ${results[i].last_name} - ${results[i].contact_email} - ${results[i].contact_phone_number}</li>`;
-                }
-                output += "<ul>";
+                let tableBody = document.getElementById("contactTable");
+                tableBody.innerHTML = ""; // Clear previous entries
 
-                document.getElementById("contactsList").innerHTML = output;
+                // Insert each contact as a new table row
+                for (let i = 0; i < results.length; i++) {
+                    let row = document.createElement("tr");
+                    row.innerHTML = `
+                        <td>${results[i].firstName} ${results[i].lastName}</td>
+                        <td>${results[i].phone}</td>
+                        <td>${results[i].company || "N/A"}</td>
+                        <td>${results[i].email}</td>
+                        <td>${results[i].notes || "N/A"}</td>
+                        <td>
+                            <button onclick="updateContact(${results[i].id})">Edit</button>
+                            <button onclick="deleteContact(${results[i].id})">Delete</button>
+                        </td>
+                    `;
+                    tableBody.appendChild(row);
+                }
             }
         };
         xhr.send(jsonPayload);  // This sends the add user request to the database
@@ -242,7 +269,7 @@ function loadContacts() {
     catch(err) {
         // TODO: Or only display error if name and email is blank since that is the minimum information needed for each contact
         // By default this just displays a single error message if the add user request is rejected for any reason
-        document.getElementById("contactsList").innerHTML = err.message;
+        document.getElementById("contactTable").innerHTML = `<tr><td colspan="6">${err.message}</td></tr>`;
     }
 }
 
@@ -262,7 +289,7 @@ function doLogin()
 //	var tmp = {login:login,password:hash};
 	let jsonPayload = JSON.stringify( tmp );
 	
-	let url = urlBase + '/Login.' + extension;
+	let url = urlBase + '/Login.' + extention;
 
 	let xhr = new XMLHttpRequest();
 	xhr.open("POST", url, true);
@@ -330,6 +357,8 @@ function readCookie()
 			userId = parseInt( tokens[1].trim() );
 		}
 	}
+
+    console.log(userId);
 	
 	if( userId < 0 )
 	{
@@ -341,7 +370,7 @@ function readCookie()
 	}
 }
 
-function doLogout()
+function doLogOut()
 {
 	userId = 0;
 	firstName = "";
