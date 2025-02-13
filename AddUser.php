@@ -3,7 +3,7 @@
 
 	// These grab the information by their labels in the json
 	$login = $indata["user_login"];
-	$password = $indata["user_password"];
+	$userpassword = $indata["user_password"];
 	$email = $indata["user_email"];
 	$company = $indata["user_company"];
 	$phone = $indata["user_phone_number"];
@@ -23,7 +23,7 @@
 	// SQL connection is successful
 	else {
 		$stmt = $conn->prepare("INSERT into users (user_login,user_password,user_email,first_name,last_name,user_company,user_phone_number) VALUES(?,?,?,?,?,?,?)");
-		$stmt->bind_param("sssssss", $login,$password,$email,$firstName,$lastName,$company,$phone);
+		$stmt->bind_param("sssssss", $login,$userpassword,$email,$firstName,$lastName,$company,$phone);
 		$stmt->execute();
 		$stmt->close();
 		$conn->close();
