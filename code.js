@@ -4,23 +4,28 @@ const extention = 'php';
 let userId = 0;
 let firstName = "";
 let lastName = "";
-
 let companyName = "";
 let phoneNum = 0;
 let email = "";
 
+// login and password here are for creating a new user
+let login = "";
+let password = "";
+
 function addUser() {
     // This section grabs the text inputed into the fields when adding a user
-    //let newUserID = document.getElementById("userIdText") // This would only be needed if there is an input field for ID
     let newFirstName = document.getElementById("newFirstNameField").value;
     let newLastName = document.getElementById("newLastNameField").value;
     let newCompanyName = document.getElementById("newCompanyNameField").value;
     let newPhoneNum = document.getElementById("newPhoneNumField").value;
     let newEmail = document.getElementById("newEmailField").value;
 
+    let newLogin = document.getElementById("createLoginField").value;
+    let newPassword = document.getElementById("createPasswordField").value;
+
     document.getElementById("userAddResult").innerHTML = "";
   
-    let tmp = {userID:newUserID, firstName:newFirstName, lastName:newLastName, companyName:newCompanyName, phoneNum:newPhoneNum, email:newEmail}  // Not 100% sure about this line
+    let tmp = {user_login:newLogin, user_password:newPassword, user_email:newEmail, user_firstName:newFirstName, user_lastName:newLastName, user_company:newCompanyName, user_phone_num:newPhoneNum};
     let jsonPayload = JSON.stringify(tmp);
     
     let url = urlBase + '/AddUser' + extention;
@@ -31,7 +36,6 @@ function addUser() {
     
     try {
         xhr.onreadystatechange = function() {
-            // I'm not sure what exactly the if condition means or if the values would be different for us but this was in the code.js for the colors lab
             if (this.readyState == 4 && this.status == 200) {
                 document.getElementById("userAddResult").innerHTML = "User Added";
             }
@@ -86,6 +90,35 @@ function searchContacts() {
     }
 }
 
+function addContact() {
+    let newFirstName = document.getElementById("AddContactFirstNameField").value;
+    let newLastName = document.getElementById("AddContactLastNameField").value;
+    let newEmail = document.getElementById("AddContactEmailField").value;
+    let newPhoneNum = document.getElementById("AddContactPhoneField").value;
+    let newCompanyName = document.getElementById("AddContactCompanyField").value;
+    let newNotes = document.getElementById("AddContactNotesField").value;
+
+    let tmp = {first_name:newFirstName,last_name:newLastName,contact_email:newEmail,contact_phone_number:newPhoneNum,contact_company:newCompanyName,notes:newNotes,user_id:userId};
+    let jsonPayload = JSON.stringify(tmp);
+
+    let url = urlBase + '/AddContact.' + extention; // Connects to the AddContact.php file
+
+    let xhr = new XMLHttpRequest();
+    xhr.open("POST", url, true);
+    xhr.setRequestHeader("Content-type", "application/json; charset=UTF-8");
+    try {
+        xhr.onreadystatechange = function() {
+            if (this.readyState == 4 && this.status == 200) {
+                document.getElementById("AddContactResult").innerHTML = "Contact added";
+            }
+        };
+        xhr.send(jsonPayload);
+    }
+    catch(err) {
+        document.getElementById("AddContactResult").innerHTML = err.message;
+    }
+}
+
 function updateContact() {
     let contactId = document.getElementById("contactIdField").value; // Hidden field
     let updatedFirstName = document.getElementById("updateFirstNameField").value;
@@ -131,4 +164,28 @@ function updateContact() {
     }
 }
 
+function deleteContact() {
+    // ! I'm not sure that this actually gets the right value
+    let delContactId = document.getElementById("DeleteButton").value;
+
+    let tmp = {contact_id:delContactId};
+    let jsonPayload = JSON.stringify(tmp);
+
+    let url = urlBase + '/DeleteContact.' + extention;  // Connects to DeleteContact.php
+
+    let xhr = new XMLHttpRequest();
+    xhr.open("POST", url, true);
+    xhr.setRequestHeader("Content-type", "application/json; charset=UTF-8");
+    try {
+        xhr.onreadystatechange = function() {
+            if (this.readyState == 4 && this.status == 200) {
+                document.getElementById("deleteResult").innerHTML = "Contact deleted";
+            }
+        };
+        xhr.send(jsonPayload);
+    }
+    catch(err) {
+        document.getElementById("deleteResult").innerHTML = err.message;
+    }
+}
 
