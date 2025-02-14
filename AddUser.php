@@ -1,6 +1,24 @@
 <?php
     $indata = getRequestInfo();
 
+	// all fields are required
+    if (empty($indata["first_name"])) {
+        returnWithError("First name is required");
+		exit();
+    } else if (empty($indata["last_name"])) {
+		returnWithError("Last name is required");
+		exit();
+	} else if (empty($indata["user_login"])) {
+		returnWithError("User login is required");
+		exit();
+	} else if (empty($indata["user_password"])) {
+		returnWithError("User password is required");
+		exit();
+	} else if (empty($indata["user_email"])) {
+		returnWithError("User email is required");
+		exit();
+	}
+
 	// These grab the information by their labels in the json
 	$login = $indata["user_login"];
 	$userpassword = $indata["user_password"];
@@ -23,13 +41,13 @@
 	// SQL connection is successful
 	else {
 		// Check if username is already taken
-		$stmt = $conn->prepare("SELECT user_id FROM users WHERE user_login = ?");
-        $stmt->bind_param("s", $login);
+		$stmt = $conn->prepare("SELECT user_id FROM users WHERE (user_login = ? OR user_email = ?)");
+        $stmt->bind_param("ss", $login, $email);
         $stmt->execute();
         $stmt->store_result();
 		if ($stmt->num_rows > 0) {
             // if it is already taken, give an error
-            returnWithError("Username already exists. Please choose another.");
+            returnWithError("An account with this username or email already exists. Please choose another.");
         } else {
 			//username is not already taken
 			$stmt->close();

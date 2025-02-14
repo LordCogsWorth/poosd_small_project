@@ -19,7 +19,7 @@
     else
     {
         // SQL query with proper parentheses for correct logic
-        $stmt = $conn->prepare("SELECT first_name, last_name, contact_phone_number, contact_email, contact_company, contact_id 
+        $stmt = $conn->prepare("SELECT first_name, last_name, contact_phone_number, contact_email, contact_company, notes, contact_id 
                                 FROM contacts 
                                 WHERE (first_name LIKE ? OR last_name LIKE ? OR contact_email LIKE ? OR contact_phone_number LIKE ? OR contact_company LIKE ?) 
                                 AND user_id = ?");
@@ -39,6 +39,7 @@
                 "phone" => $row["contact_phone_number"],
                 "email" => $row["contact_email"],
                 "company" => $row["contact_company"],
+                "notes" => $row["notes"],
                 "id" => $row["contact_id"]
             ];
         }

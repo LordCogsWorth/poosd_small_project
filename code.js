@@ -35,6 +35,28 @@ function addUser() {
     let newPassword = document.getElementById("createPasswordField").value;
 
     document.getElementById("userAddResult").innerHTML = "";
+
+    // Validate required fields
+    if (!newFirstName) {
+        document.getElementById("userAddResult").innerHTML = "First name is required";
+        return;
+    }
+    if (!newLastName) {
+        document.getElementById("userAddResult").innerHTML = "Last name is required";
+        return;
+    }
+    if (!newLogin) {
+        document.getElementById("userAddResult").innerHTML = "Username is required";
+        return;
+    }
+    if (!newPassword) {
+        document.getElementById("userAddResult").innerHTML = "Password is required";
+        return;
+    }
+    if (!newEmail) {
+        document.getElementById("userAddResult").innerHTML = "Email is required";
+        return;
+    }
   
     let tmp = {user_login:newLogin, user_password:newPassword, user_email:newEmail, first_name:newFirstName, last_name:newLastName, user_company:newCompanyName, user_phone_number:newPhoneNum};
     let jsonPayload = JSON.stringify(tmp);
@@ -48,7 +70,13 @@ function addUser() {
     try {
         xhr.onreadystatechange = function() {
             if (this.readyState == 4 && this.status == 200) {
-                document.getElementById("userAddResult").innerHTML = "User Added";
+                let jsonObject = JSON.parse(xhr.responseText);
+
+                if (jsonObject.error) {
+                    document.getElementById("userAddResult").innerHTML = "Error: " + jsonObject.error;
+                } else {
+                    document.getElementById("userAddResult").innerHTML = "User added successfully!";
+                }
             }
         };
         xhr.send(jsonPayload);  // This sends the add user request to the database
@@ -142,9 +170,9 @@ function searchContacts() {
                     row.innerHTML = `
                         <td>${results[i].firstName} ${results[i].lastName}</td>
                         <td>${results[i].phone}</td>
-                        <td>${results[i].company}</td>
+                        <td>${results[i].company || "N/A"}</td>
                         <td>${results[i].email}</td>
-                        <td>${results[i].notes ? results[i].notes : ""}</td>
+                        <td>${results[i].notes || "N/A"}</td>
                         <td>
                             <button onclick="updateContact(${results[i].id})"><i class="fas fa-edit"></i></button>
                             <button onclick="deleteContact(${results[i].id})"><i class="fas fa-trash"></i></button>
