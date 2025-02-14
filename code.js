@@ -8,6 +8,7 @@ let companyName = "";
 let phoneNum = 0;
 let email = "";
 
+// for index.html
 function toSignup()
 {
     window.location.href = "signup.html";
@@ -38,7 +39,7 @@ function addUser() {
     let tmp = {user_login:newLogin, user_password:newPassword, user_email:newEmail, first_name:newFirstName, last_name:newLastName, user_company:newCompanyName, user_phone_number:newPhoneNum};
     let jsonPayload = JSON.stringify(tmp);
     
-    let url = urlBase + '/AddUser' + extention;
+    let url = urlBase + '/AddUser.' + extention;
 
     let xhr = new XMLHttpRequest();
     xhr.open("POST", url, true);
@@ -60,7 +61,11 @@ function addUser() {
     }
 }
 
+
+// for main.html
 function addContact() {
+    document.getElementById("ContactAddResult").innerHTML = "";
+
     let newFirstName = document.getElementById("contactFirstName").value;
     let newLastName = document.getElementById("contactLastName").value;
     let newEmail = document.getElementById("contactEmail").value;
@@ -68,25 +73,38 @@ function addContact() {
     let newCompanyName = document.getElementById("contactCompany").value;
     let newNotes = document.getElementById("contactNotes").value;
 
+    if (!newFirstName || !newLastName || !newEmail || !newPhoneNum) {
+        document.getElementById("ContactAddResult").innerHTML = "First and last name, email, and phone are required.";
+        return;
+    }
+
     let tmp = {first_name:newFirstName,last_name:newLastName,contact_email:newEmail,contact_phone_number:newPhoneNum,contact_company:newCompanyName,notes:newNotes,user_id:userId};
     console.log(userId);
-    let jsonPayload = JSON.stringify(tmp);
+ 
+   let jsonPayload = JSON.stringify(tmp);
 
     let url = urlBase + '/AddContact.' + extention; // Connects to the AddContact.php file
 
     let xhr = new XMLHttpRequest();
     xhr.open("POST", url, true);
     xhr.setRequestHeader("Content-type", "application/json; charset=UTF-8");
+
     try {
         xhr.onreadystatechange = function() {
             if (this.readyState == 4 && this.status == 200) {
-                document.getElementById("ContactAddResult").innerHTML = "Contact added";
+                let jsonObject = JSON.parse(xhr.responseText);
+
+                if (jsonObject.error) {
+                    document.getElementById("ContactAddResult").innerHTML = "Error: " + jsonObject.error;
+                } else {
+                    document.getElementById("ContactAddResult").innerHTML = "Contact added successfully!";
+                }
             }
         };
         xhr.send(jsonPayload);
     }
     catch(err) {
-        document.getElementById("ContactAddResult").innerHTML = err.message;
+        document.getElementById("ContactAddResult").innerHTML = "Request failed: " + err.message;
     }
 }
 
@@ -128,8 +146,8 @@ function searchContacts() {
                         <td>${results[i].email}</td>
                         <td>${results[i].notes ? results[i].notes : ""}</td>
                         <td>
-                            <button onclick="updateContact(${results[i].id})">Edit</button>
-                            <button onclick="deleteContact(${results[i].id})">Delete</button>
+                            <button onclick="updateContact(${results[i].id})"><i class="fas fa-edit"></i></button>
+                            <button onclick="deleteContact(${results[i].id})"><i class="fas fa-trash"></i></button>
                         </td>
                     `;
                     tableBody.appendChild(row);
@@ -263,8 +281,8 @@ function loadContacts() {
                         <td>${results[i].email}</td>
                         <td>${results[i].notes || "N/A"}</td>
                         <td>
-                            <button onclick="updateContact(${results[i].id})">Edit</button>
-                            <button onclick="deleteContact(${results[i].id})">Delete</button>
+                            <button onclick="updateContact(${results[i].id})"><i class="fas fa-edit"></i></button>
+                            <button onclick="deleteContact(${results[i].id})"><i class="fas fa-trash"></i></button>
                         </td>
                     `;
                     tableBody.appendChild(row);
@@ -385,4 +403,3 @@ function doLogOut()
 	document.cookie = "firstName= ; expires = Thu, 01 Jan 1970 00:00:00 GMT";
 	window.location.href = "index.html";
 }
-
