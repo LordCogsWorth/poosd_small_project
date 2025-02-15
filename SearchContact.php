@@ -21,11 +21,11 @@
         // SQL query with proper parentheses for correct logic
         $stmt = $conn->prepare("SELECT first_name, last_name, contact_phone_number, contact_email, contact_company, notes, contact_id 
                                 FROM contacts 
-                                WHERE (first_name LIKE ? OR last_name LIKE ? OR contact_email LIKE ? OR contact_phone_number LIKE ? OR contact_company LIKE ?) 
+                                WHERE (first_name LIKE ? OR last_name LIKE ? OR contact_email LIKE ? OR contact_phone_number LIKE ? OR contact_company LIKE ? OR notes LIKE ?) 
                                 AND user_id = ?");
         
         $searchTerm = "%" . $inData["search"] . "%";
-        $stmt->bind_param("sssssi", $searchTerm, $searchTerm, $searchTerm, $searchTerm, $searchTerm, $inData["userId"]);
+        $stmt->bind_param("ssssssi", $searchTerm, $searchTerm, $searchTerm, $searchTerm, $searchTerm, $searchTerm, $inData["userId"]);
         $stmt->execute();
         $result = $stmt->get_result();
 

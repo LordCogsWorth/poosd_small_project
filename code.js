@@ -8,6 +8,7 @@ let companyName = "";
 let phoneNum = 0;
 let email = "";
 
+console.log("Script loaded");
 // for index.html
 function toSignup()
 {
@@ -126,7 +127,8 @@ function addContact() {
                     document.getElementById("ContactAddResult").innerHTML = "Error: " + jsonObject.error;
                 } else {
                     document.getElementById("ContactAddResult").innerHTML = "Contact added successfully!";
-                }
+		    document.getElementById("addContactForm").reset();
+		}
             }
         };
         xhr.send(jsonPayload);
@@ -168,13 +170,13 @@ function searchContacts() {
                     let row = document.createElement("tr");
                     row.setAttribute("data-contact-id", results[i].id);
                     row.innerHTML = `
-                        <td>${results[i].firstName} ${results[i].lastName}</td>
-                        <td>${results[i].phone}</td>
-                        <td>${results[i].company || "N/A"}</td>
-                        <td>${results[i].email}</td>
-                        <td>${results[i].notes || "N/A"}</td>
+                        <td class="contactFirstName">${results[i].firstName} ${results[i].lastName}</td>
+                        <td class="contactPhone">${results[i].phone}</td>
+                        <td class="contactCompany">${results[i].company}</td>
+                        <td class="contactEmail">${results[i].email}</td>
+                        <td class="contactNotes">${results[i].notes}</td>
                         <td>
-                            <button onclick="updateContact(${results[i].id})"><i class="fas fa-edit"></i></button>
+                            <button onclick="editContact(${results[i].id})"><i class="fas fa-edit"></i></button>
                             <button onclick="deleteContact(${results[i].id})"><i class="fas fa-trash"></i></button>
                         </td>
                     `;
@@ -189,12 +191,75 @@ function searchContacts() {
     }
 }
 
+function editContact(contactId) {
+        let editRow = document.querySelector(`tr[data-contact-id="${contactId}"]`);
+
+	if(!editRow) {
+		console.error("Row not found for editing:", contactId);
+		return;
+	}
+
+	let fullName = editRow.querySelector(".contactFirstName").innerText;
+	let [editFirstName, editLastName] = fullName.split(" ");
+
+//	let editFirstName = editRow.querySelector(".contactFirstName").innerText;
+//	let editLastName = editRow.querySelector(".contactFirstName").innerText;
+	let editPhone = editRow.querySelector(".contactPhone").innerText;
+	let editCompany = editRow.querySelector(".contactCompany").innerText;
+	let editEmail = editRow.querySelector(".contactEmail").innerText;
+	let editNotes = editRow.querySelector(".contactNotes").innerText;
+
+	editRow.dataset.originalFirstName = editFirstName;
+	editRow.dataset.originalLastName = editLastName;
+	editRow.dataset.originalPhone = editPhone;
+	editRow.dataset.originalCompany = editCompany;
+	editRow.dataset.originalEmail = editEmail;
+	editRow.dataset.originalNotes = editNotes;
+        editRow.innerHTML = `
+		<td>
+			<input type="text" id="updateFirstNameField" value="${editFirstName}" placeholder="First Name">
+			<input type="text" id="updateLastNameField" value="${editLastName}" placeholder="Last Name">
+		</td>
+		<td><input type="text" id="updatePhoneField" value="${editPhone}" placeholder="Phone"></td>
+		<td><input type="text" id="updateCompanyField" value="${editCompany}" placeholder="Company"></td>
+		<td><input type="email" id="updateEmailField" value="${editEmail}" placeholder"Email"></td>
+		<td><input type="text" id="updateNotesField" value="${editNotes}" placeholder="Notes"></td>
+		<td>
+			<button onclick="updateContact(${contactId})">Save</button>
+			<button onclick="cancelEdit(${contactId})">Cancel</button>
+		</td>
+	`;
+}
+
+function cancelEdit(contactId) {
+        let cancelRow = document.querySelector(`tr[data-contact-id="${contactId}"]`);
+
+	if (!cancelRow) {
+		console.error("Row not found for canceling:", contactId);
+		return;
+	}
+
+	cancelRow.innerHTML = `
+		<td class="contactFirstName">${cancelRow.dataset.originalFirstName} ${cancelRow.dataset.originalLastName}</td>
+		<td class="contactPhone">${cancelRow.dataset.originalPhone}</td>
+		<td class="contactCompany">${cancelRow.dataset.originalCompany}</td>
+		<td class="contactEmail">${cancelRow.dataset.originalEmail}</td>
+		<td class="contactNotes">${cancelRow.dataset.originalNotes}</td>
+		<td>
+			<button onclick="editContact(${contactId})"><i class="fas fa-edit"></i></button>
+			<button onclick="deleteContact(${contactId})"<i class="fas fa-trash"></i></button>
+		</td>
+	`;
+}
+
 function updateContact(contactId) {
     let updatedFirstName = document.getElementById("updateFirstNameField").value;
     let updatedLastName = document.getElementById("updateLastNameField").value;
     let updatedEmail = document.getElementById("updateEmailField").value;
     let updatedPhone = document.getElementById("updatePhoneField").value;
     let updatedCompany = document.getElementById("updateCompanyField").value;
+    let updatedNotes = document.getElementById("updateNotesField").value;
+
 
     document.getElementById("updateResult").innerHTML = "";
 
@@ -205,7 +270,8 @@ function updateContact(contactId) {
         lastName: updatedLastName,
         email: updatedEmail,
         phone: updatedPhone,
-        company: updatedCompany
+        company: updatedCompany,
+	    notes : updatedNotes
     };
     
     let jsonPayload = JSON.stringify(tmp);
@@ -223,10 +289,12 @@ function updateContact(contactId) {
                 if (jsonObject.error && jsonObject.error !== "") {
                     document.getElementById("updateResult").innerHTML = jsonObject.error;
                 } else {
-                    document.getElementById("updateResult").innerHTML = "Contact updated successfully";
-                }
+                    document.getElementById("updateResult").innerHTML = jsonObject.success;
+                    loadContacts();
+		        }               
             }
         };
+	    
         xhr.send(jsonPayload);
     } catch (err) {
         document.getElementById("updateResult").innerHTML = err.message;
@@ -234,7 +302,7 @@ function updateContact(contactId) {
 }
 
 function deleteContact(delContactId) {
-    if (!delContactId) {
+     if (!delContactId) {
         console.error("No contact ID");
         return;
     }
@@ -303,13 +371,13 @@ function loadContacts() {
                     let row = document.createElement("tr");
                     row.setAttribute("data-contact-id", results[i].id);
                     row.innerHTML = `
-                        <td>${results[i].firstName} ${results[i].lastName}</td>
-                        <td>${results[i].phone}</td>
-                        <td>${results[i].company || "N/A"}</td>
-                        <td>${results[i].email}</td>
-                        <td>${results[i].notes || "N/A"}</td>
+                        <td class="contactFirstName">${results[i].firstName} ${results[i].lastName}</td>
+                        <td class="contactPhone">${results[i].phone}</td>
+                        <td class="contactCompany">${results[i].company}</td>
+                        <td class="contactEmail">${results[i].email}</td>
+                        <td class="contactNotes">${results[i].notes}</td>
                         <td>
-                            <button onclick="updateContact(${results[i].id})"><i class="fas fa-edit"></i></button>
+                            <button onclick="editContact(${results[i].id})"><i class="fas fa-edit"></i></button>
                             <button onclick="deleteContact(${results[i].id})"><i class="fas fa-trash"></i></button>
                         </td>
                     `;
@@ -339,7 +407,6 @@ function doLogin()
 	document.getElementById("user_result").innerHTML = "";
 
 	let tmp = {user_login:user_login,user_password:user_password};
-//	var tmp = {login:login,password:hash};
 	let jsonPayload = JSON.stringify( tmp );
 	
 	let url = urlBase + '/Login.' + extention;
@@ -375,7 +442,6 @@ function doLogin()
 	catch(err)
 	{
 		document.getElementById("user_result").innerHTML = err.message;
-		//window.location.href = "color.html";
 	}
 
 }

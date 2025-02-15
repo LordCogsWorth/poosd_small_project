@@ -16,9 +16,11 @@
     else
     {
         //They may only try to update a few fields. Make sure we
-        //check for empty fields before sending a bad query
+        //check for empty fields before sending a bad query.
+        //Company and notes can be empty tho - those
+        //aren't required.
         $fieldsToUpdate = [];
-        $stmtstmtParams = [];
+        $stmtParams = [];
         $datatypes = "";
 
         if (!empty($inData["firstName"])) {
@@ -41,9 +43,14 @@
             $stmtParams[] = $inData["phone"];
             $datatypes .= "s";
         }
-        if (!empty($inData["company"])) {
+        if (isset($inData["company"])) {
             $fieldsToUpdate[] = "contact_company = ?";
             $stmtParams[] = $inData["company"];
+            $datatypes .= "s";
+        }
+        if (isset($inData["notes"])) {
+            $fieldsToUpdate[] = "notes = ?";
+            $stmtParams[] = $inData["notes"];
             $datatypes .= "s";
         }
 
